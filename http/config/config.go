@@ -22,6 +22,9 @@ func Init() error {
 	configpath := flag.String("f", projectPath+"/http/config/config.toml", "config file")
 	flag.Parse()
 	err := initConfig(*configpath)
+
+	log.Println(GetMode())
+
 	if err != nil {
 		return err
 	}

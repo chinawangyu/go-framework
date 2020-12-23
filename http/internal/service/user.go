@@ -1,24 +1,30 @@
 package service
 
 import (
-	"go-framework/http/internal/dao"
-	"go-framework/http/internal/dto"
-	"go-framework/http/internal/protocol"
+	"go-framework/http/api"
+	"go-framework/http/internal/model"
 )
 
-type user struct {
-	userDao dao.Iuserdao
+type Iuserdao interface {
+	GetUserByUid(uid int64) *model.User
 }
 
-func NewUserService(userDao dao.Iuserdao) *user {
-	return &user{
+type User struct {
+	userDao Iuserdao
+}
+
+func NewUserService(userDao Iuserdao) *User {
+	return &User{
 		userDao: userDao,
 	}
 }
 
-func (u *user) GetUser() *protocol.RespGetUsers {
-	modelUser := u.userDao.GetUserByUid()
+func (u *User) GetUser(uid int64) *api.RespGetUsers {
+	modelUser := u.userDao.GetUserByUid(uid)
 
 	//po转vo
-	return dto.User.GetUser(modelUser)
+	return &api.RespGetUsers{
+		Name: modelUser.Name,
+		Age:  modelUser.Age,
+	}
 }

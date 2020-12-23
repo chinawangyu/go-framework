@@ -1,19 +1,21 @@
 package dao
 
-import "go-framework/http/internal/model"
+import (
+	"github.com/google/wire"
+	"go-framework/http/internal/model"
+	"go-framework/http/internal/service"
+)
 
-type Iuserdao interface {
-	GetUserByUid() *model.User
+var UserProvider = wire.NewSet(NewUserDao, wire.Bind(new(service.Iuserdao), new(*Userdao)))
+
+type Userdao struct {
 }
 
-type userdao struct {
+func NewUserDao() *Userdao {
+	return &Userdao{}
 }
 
-func NewUserDao() *userdao {
-	return &userdao{}
-}
-
-func (u *userdao) GetUserByUid() *model.User {
+func (u *Userdao) GetUserByUid(uid int64) *model.User {
 	return &model.User{
 		Name: "小明",
 		Age:  13,

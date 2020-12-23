@@ -2,9 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
 	"go-framework/http/config"
-	"go-framework/http/internal/router"
+	"go-framework/http/internal/server"
 	_ "go.uber.org/automaxprocs"
 	"log"
 	"net/http"
@@ -15,36 +14,13 @@ import (
 )
 
 func main() {
-	
+
 	err := config.Init()
 	if err != nil {
 		panic("config.Init error:" + err.Error())
 	}
 
-	gin.SetMode(config.GetMode())
-	g := gin.New()
-
-	err = router.Init(g)
-	if err != nil {
-		panic("router.Init error:" + err.Error())
-	}
-
-	port := config.GetPort()
-	srv := &http.Server{
-		Addr:           port,
-		Handler:        g,
-		ReadTimeout:    20 * time.Second,
-		WriteTimeout:   20 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-	}
-
-	go func() {
-		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen port %s error", port)
-		}
-	}()
-
-	graceShutDown(srv)
+	graceShutDown(server.NewHttpServer())
 }
 
 func graceShutDown(srv *http.Server) {
