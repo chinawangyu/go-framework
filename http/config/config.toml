@@ -1,0 +1,20 @@
+Env = "dev" #环境: dev本地 test测试 pre预发  pro生产
+Mode="debug"
+Port=8888
+
+
+[mysqlMaster]
+    Host=""
+    Password=""
+    User=""
+    Database=""
+    MaxopenConns=10
+    MaxidleConns=10
+
+[mysqlSlave]
+    Host=""
+    Password=""
+    User = ""
+    Database = ""
+    MaxopenConns = 10
+    MaxidleConns = 10

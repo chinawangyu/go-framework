@@ -55,21 +55,9 @@ func getMysqlPool(dbConfig DbConfig) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	//在进程退出时释放mysql连接池  在入口处，应用程序退出时
-	//defer pool.DB().Close()
-
-	// mysql Pool 根据系统状况自行配置
-	//pool.DB().SetConnMaxLifetime(time.Duration(mysqlSection.Key("maxlifetime").MustInt(30)) * time.Second)
-
-	//pool.DB().SetMaxIdleConns(mysqlSection.Key("maxidleConns").MustInt(10))
-
-	//pool.SetMaxOpenConns(n)  //不限制数据库最大并发数
-
+	
 	pool.DB().SetConnMaxLifetime(time.Second * 60 * 60) //运行1小时
-
 	pool.DB().SetMaxIdleConns(dbConfig.MaxidleConns)
-
 	pool.DB().SetMaxOpenConns(dbConfig.MaxopenConns)
 
 	err = pool.DB().Ping()
