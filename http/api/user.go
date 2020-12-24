@@ -6,5 +6,5 @@ type ReqGetUsers struct {
 
 type RespGetUsers struct {
 	Name string `json:"name"`
-	Age  int32  `json:"age"`
+	Age  int    `json:"age"`
 }

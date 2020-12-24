@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"go-framework/http/pkg/mysql"
 	"io/ioutil"
 	"log"
 	"os"
@@ -15,6 +16,9 @@ type Configure struct {
 	Env  string
 	Mode string
 	Port int
+
+	MysqlMaster mysql.DbConfig
+	MysqlSlave  mysql.DbConfig
 }
 
 func Init() error {

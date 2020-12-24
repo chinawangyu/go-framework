@@ -23,3 +23,8 @@ var (
 	ERR_PARAM           = Err{ErrorNo: 1000, ErrorMsg: "解析参数错误:%s"}
 	ERR_VALIDATOR_PARAM = Err{ErrorNo: 1001, ErrorMsg: "请求参数错误:%s"}
 )
+
+//数据库错误码
+var (
+	ERR_DAO_NOT_FOUND = Err{ErrorNo: 0, ErrorMsg: "查询不到数据"}
+)

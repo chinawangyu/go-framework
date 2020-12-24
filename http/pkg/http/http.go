@@ -40,12 +40,6 @@ func ResponseErrorCodeAndData(c *gin.Context, err *common.Err, data interface{})
 	return
 }
 
-// 自定义返回格式，目的兼容老版本接口
-func ResponseCustom(c *gin.Context, data interface{}) {
-	RenderJson(c, data)
-	return
-}
-
 // 失败返回
 func ResponseError(c *gin.Context, err error) {
 	commonErr, ok := err.(common.Err)

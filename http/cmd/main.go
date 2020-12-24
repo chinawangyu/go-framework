@@ -4,6 +4,7 @@ import (
 	"context"
 	"go-framework/http/config"
 	"go-framework/http/internal/server"
+	"go-framework/http/pkg/mysql"
 	_ "go.uber.org/automaxprocs"
 	"log"
 	"net/http"
@@ -14,10 +15,18 @@ import (
 )
 
 func main() {
-
-	err := config.Init()
+	var err error
+	err = config.Init()
 	if err != nil {
 		panic("config.Init error:" + err.Error())
+	}
+
+	err = mysql.NewMySqlPool(&mysql.Config{
+		Master: config.Config.MysqlMaster,
+		Slave:  config.Config.MysqlSlave,
+	})
+	if err != nil {
+		panic("mysql.Init error:" + err.Error())
 	}
 
 	graceShutDown(server.NewHttpServer())
@@ -30,8 +39,7 @@ func graceShutDown(srv *http.Server) {
 
 	log.Println("Shutdown Server ...")
 
-	/*defer mysql.CloseMysqlPool()    //close Mysql Pool
-	defer redis.CloseRedisPool()    //close Redis Pool*/
+	defer mysql.CloseMysqlPool() //close Mysql Pool
 
 	//创建一个上下文, 10s后超时
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
