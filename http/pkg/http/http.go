@@ -1,8 +1,18 @@
 package http
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-framework/http/pkg/common"
+	"go-framework/http/pkg/logger"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strings"
+	"time"
 )
 
 //获取 json 格式的请求数据
@@ -64,4 +74,67 @@ func RenderJson(c *gin.Context, data interface{}) {
 	c.Writer.Flush()
 	c.Abort()
 	return
+}
+
+// HttpPost post请求
+func PostJson(url string, params []byte) ([]byte, error) {
+	body := bytes.NewBuffer(params)
+
+	req, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{
+		Timeout: 60 * time.Second,
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
+	respData, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("httpcode error:" + fmt.Sprint(resp.StatusCode))
+	}
+
+	return respData, nil
+}
+
+func PostJsonRequest(url string, requestData interface{}, responseData interface{}) (err error) {
+	if !common.IsValidString(url) {
+		return errors.New("PostJsonRequest url is invalid!")
+	}
+
+	var jsonData []byte
+	jsonData, err = json.Marshal(requestData)
+	if err != nil {
+		logger.Warnf("Marshal json error:%s ", err.Error())
+		return err
+	}
+	log.Printf("request:%+v, json:%+v\n", requestData, string(jsonData))
+	var responseByte []byte
+	responseByte, err = PostJson(url, jsonData)
+	if err != nil {
+		logger.Warnf("PostJson error:%s url:%s data:%s", err.Error(), url, string(responseByte))
+		return err
+	}
+	responseByte = []byte(strings.Replace(string(responseByte), "\"data\":[]", "\"data\":{}", 1))
+	err = json.Unmarshal(responseByte, responseData)
+	log.Printf("url:%s ,request:%+v, response:%+v\n", url, requestData, string(responseByte))
+	if err != nil {
+		logger.Warnf("Unmarshal response error,data:%s err:%s ", string(responseByte), err.Error())
+		return err
+	}
+	return nil
 }

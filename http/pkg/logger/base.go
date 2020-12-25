@@ -1,8 +1,15 @@
 package logger
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/natefinch/lumberjack"
@@ -75,4 +82,55 @@ func initLogger(logFile string, logLevel string, consoleDebug bool, maxSize, max
 
 	SugaredLogger = zlog.Sugar()
 	return SugaredLogger, nil
+}
+
+//发送钉钉提醒
+func SendMonitor2DingDing(dingUrl string, args ...interface{}) {
+	slice := make([]string, len(args))
+
+	for i, v := range args {
+		slice[i] = fmt.Sprint(v)
+	}
+
+	s := strings.Join(slice, ",")
+
+	host, _ := os.Hostname()
+	b := json.RawMessage(`
+		{"msgtype": "text","text": {"content": "error[` + host + `] \n` + s + `"}}`)
+
+	_, _ = postJson(dingUrl, b)
+}
+
+// HttpPost post请求
+func postJson(url string, params []byte) ([]byte, error) {
+	body := bytes.NewBuffer(params)
+
+	req, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{
+		Timeout: 60 * time.Second,
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
+	respData, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("httpcode error:" + fmt.Sprint(resp.StatusCode))
+	}
+	return respData, nil
 }

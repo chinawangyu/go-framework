@@ -6,7 +6,7 @@ Port=8888
 [mysqlMaster]
     Host=""
     Password=""
-    User=""
+    User="wenba"
     Database=""
     MaxopenConns=10
     MaxidleConns=10
@@ -18,3 +18,14 @@ Port=8888
     Database = ""
     MaxopenConns = 10
     MaxidleConns = 10
+
+[log]
+    logLevel="debug"
+    logFile="/data/logs/xxx.log"
+    logPath=""
+    isDebug=1
+    maxSize=500
+    maxBackups=0
+    maxAge=30
+    compress=false
+    dingUrl=""

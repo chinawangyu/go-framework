@@ -13,19 +13,27 @@ type LogConfig struct {
 	MaxBackups   int
 	MaxAge       int
 	Compress     bool
+	DingUrl      string
 }
 
-
-var BusinessLogger *zap.SugaredLogger
-var AccessLogger *zap.SugaredLogger
-
-
-func InitBusinessLogger(logConf LogConfig) {
-	BusinessLogger, _ = InitLogger(&logConf)
-	BusinessLogger.Infof("log config:%+v", logConf)
+type loggerBase struct {
+	Logger  *zap.SugaredLogger
+	dingUrl string
 }
 
-func InitAccessLogger(logConf LogConfig) {
-	AccessLogger, _ = InitLogger(&logConf)
-	BusinessLogger.Infof("access log config:%+v", logConf)
+var Business *loggerBase
+
+//初始化业务日志
+func InitBusinessLogger(logConf *LogConfig) error {
+	loggerObj, err := InitLogger(logConf)
+	if err != nil {
+		return err
+	}
+
+	Business = &loggerBase{
+		Logger:  loggerObj,
+		dingUrl: logConf.DingUrl,
+	}
+	Business.Logger.Infof("InitBusinessLogger config:%+v", logConf)
+	return nil
 }

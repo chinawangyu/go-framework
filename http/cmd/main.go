@@ -4,6 +4,7 @@ import (
 	"context"
 	"go-framework/http/config"
 	"go-framework/http/internal/server"
+	"go-framework/http/pkg/logger"
 	"go-framework/http/pkg/mysql"
 	_ "go.uber.org/automaxprocs"
 	"log"
@@ -20,6 +21,13 @@ func main() {
 	if err != nil {
 		panic("config.Init error:" + err.Error())
 	}
+
+	err = logger.InitBusinessLogger(&config.Config.Log)
+	if err != nil {
+		panic("logger.Init error:" + err.Error())
+	}
+
+	logger.Business.Logger.Info("哈喽～")
 
 	err = mysql.NewMySqlPool(&mysql.Config{
 		Master: config.Config.MysqlMaster,

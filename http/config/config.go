@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"go-framework/http/pkg/logger"
 	"go-framework/http/pkg/mysql"
 	"io/ioutil"
 	"log"
@@ -16,6 +17,7 @@ type Configure struct {
 	Env  string
 	Mode string
 	Port int
+	Log  logger.LogConfig
 
 	MysqlMaster mysql.DbConfig
 	MysqlSlave  mysql.DbConfig
