@@ -5,7 +5,7 @@ import (
 	"go-framework/http/api"
 	"go-framework/http/internal/di"
 	"go-framework/http/pkg/http"
-	"log"
+	"go-framework/http/pkg/logger"
 )
 
 func GetUser(c *gin.Context) {
@@ -17,7 +17,7 @@ func GetUser(c *gin.Context) {
 
 	resp, err := di.NewUserService().GetUser(req.Uid)
 	if err != nil {
-		log.Printf("%+v\n", err)
+		logger.Warnf("数据问题 %+v", err)
 		http.ResponseError(c, err)
 		return
 	}

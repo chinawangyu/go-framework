@@ -6,7 +6,7 @@ Port=8888
 [mysqlMaster]
     Host=""
     Password=""
-    User="wenba"
+    User=""
     Database=""
     MaxopenConns=10
     MaxidleConns=10
@@ -28,4 +28,4 @@ Port=8888
     maxBackups=0
     maxAge=30
     compress=false
-    dingUrl=""
+    dingUrl="https://oapi.dingtalk.com/robot/send?access_token=65857639ac7c1b01c80224fd6b18e1e0e373f2671f62cae17960dbaed80f193c"

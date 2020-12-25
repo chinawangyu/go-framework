@@ -27,8 +27,6 @@ func main() {
 		panic("logger.Init error:" + err.Error())
 	}
 
-	logger.Business.Logger.Info("哈喽～")
-
 	err = mysql.NewMySqlPool(&mysql.Config{
 		Master: config.Config.MysqlMaster,
 		Slave:  config.Config.MysqlSlave,
